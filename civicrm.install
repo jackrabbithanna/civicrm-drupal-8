@@ -51,17 +51,34 @@ function civicrm_requirements($phase) {
 
   $civicrm_base = _civicrm_find_civicrm();
 
+  // Introduced in 11.2, and then compatibility layer removed in 11.3, so we
+  // have to support both.
+  if (class_exists('\Drupal\Core\Extension\Requirement\RequirementSeverity')) {
+    $severityMap = [
+      'info' => \Drupal\Core\Extension\Requirement\RequirementSeverity::OK,
+      'warning' => \Drupal\Core\Extension\Requirement\RequirementSeverity::Warning,
+      'error' => \Drupal\Core\Extension\Requirement\RequirementSeverity::Error,
+    ];
+  }
+  else {
+    $severityMap = [
+      'info' => REQUIREMENT_OK,
+      'warning' => REQUIREMENT_WARNING,
+      'error' => REQUIREMENT_ERROR,
+    ];
+  }
+
   if ($civicrm_base) {
     $requirements['civicrm.location'] = [
       'title' => 'CiviCRM location',
-      'severity' => REQUIREMENT_OK,
+      'severity' => $severityMap['info'],
       'description' => 'CiviCRM core directory',
     ];
   }
   else {
     $requirements['civicrm.location'] = [
       'title' => 'CiviCRM location',
-      'severity' => REQUIREMENT_ERROR,
+      'severity' => $severityMap['error'],
       'description' => 'CiviCRM must be installed via composer.',
     ];
     return $requirements;
@@ -73,16 +90,11 @@ function civicrm_requirements($phase) {
     $requirements['civicrm.checkAuthorized'] = [
       'title' => 'CiviCRM Installation Not Authorized',
       'description' => 'The current user does not have sufficient permissions to perform installation.',
-      'severity' => REQUIREMENT_WARNING,
+      'severity' => $severityMap['warning'],
     ];
     return $requirements;
   }
 
-  $severityMap = [
-    'info' => REQUIREMENT_OK,
-    'warning' => REQUIREMENT_WARNING,
-    'error' => REQUIREMENT_ERROR,
-  ];
   $sections = [
     'system' => 'CiviCRM: System',
     'database' => 'CiviCRM: Database',
