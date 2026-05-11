@@ -85,6 +85,24 @@ class CivicrmInstallRequirements implements InstallRequirementsInterface {
       return $requirements;
     }
 
+    $sections = [
+      'system' => 'CiviCRM: System',
+      'database' => 'CiviCRM: Database',
+      'other' => 'CiviCRM: Other',
+    ];
+
+
+    foreach ($setup->checkRequirements()->getMessages() as $msg) {
+      $section = isset($sections[$msg['section']]) ? $sections[$msg['section']] : $sections['other'];
+      $key = 'civicrm.' . $msg['section'] . '.' . $msg['name'];
+      $requirements[$key] = [
+        'title' => $section . ': ' . $msg['message'],
+        'description' => $section . ': ' . $msg['message'],
+        'severity' => $severityMap[$msg['severity']],
+      ];
+    }
+
+
     ksort($requirements);
 
     return $requirements;
