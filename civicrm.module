@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Route;
 use Drupal\Core\Render\Markup;
 
 require_once 'civicrm.user.inc';
+require_once 'civicrm.install';
 
 /**
  * Implements hook_page_attachments().
