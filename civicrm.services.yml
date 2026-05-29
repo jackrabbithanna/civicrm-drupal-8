@@ -12,3 +12,6 @@ services:
     class: Drupal\civicrm\PathProcessor\CivicrmPathProcessor
     tags:
       - { name: path_processor_inbound, priority: 250 }
+  civicrm.event_subscriber_registrar:
+    class: Drupal\civicrm\EventSubscriberRegistrar
+    arguments: ['@service_container', []]
