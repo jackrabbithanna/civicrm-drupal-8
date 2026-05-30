@@ -44,6 +44,26 @@ function civicrm_uninstall() {
 }
 
 /**
+ * Wire up the CiviCRM-to-Drupal event-subscriber bridge.
+ *
+ * Rebuilds the service container so the new CivicrmServiceProvider and the
+ * civicrm.event_subscriber_registrar service are compiled in. Until that
+ * happens, hook_civicrm_config() cannot register services tagged
+ * "civicrm.event_subscriber" on \Civi::dispatcher().
+ *
+ * No CiviCRM cache flush is required here: CiviCRM's hook registry
+ * (CRM_Utils_Hook) is an in-memory ArrayCache rebuilt on every request, so the
+ * new civicrm_civicrm_config() implementation is discovered automatically as
+ * soon as the code is deployed.
+ */
+function civicrm_update_10001() {
+  // Mark the container for rebuild on the next boot. drush updatedb / update.php
+  // also rebuild caches when they finish, but doing it here makes the
+  // requirement explicit and self-contained.
+  \Drupal::service('kernel')->invalidateContainer();
+}
+
+/**
  * Implements hook_requirements().
  */
 function civicrm_requirements($phase) {

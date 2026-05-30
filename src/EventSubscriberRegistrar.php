@@ -43,7 +43,7 @@ class EventSubscriberRegistrar {
   /**
    * Object IDs of dispatchers already populated, keyed for idempotency.
    *
-   * @var array<int, true>
+   * @var array
    */
   protected array $registered = [];
 

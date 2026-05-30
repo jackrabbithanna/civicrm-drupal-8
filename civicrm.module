@@ -424,8 +424,14 @@ function civicrm_key_disable() {
  * the registrar itself is idempotent across repeat invocations.
  */
 function civicrm_civicrm_config(&$config, $flags = NULL) {
+  // Guard for CLI/"extern" boots where Drupal is unavailable, and for the brief
+  // window just after a code deploy but before the container has been rebuilt
+  // (when this hook already exists but the registrar service does not yet).
   if (class_exists('\Drupal') && \Drupal::hasContainer()) {
-    \Drupal::service('civicrm.event_subscriber_registrar')->register();
+    $container = \Drupal::getContainer();
+    if ($container->has('civicrm.event_subscriber_registrar')) {
+      $container->get('civicrm.event_subscriber_registrar')->register();
+    }
   }
 }
 
